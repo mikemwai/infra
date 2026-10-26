@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -24,6 +24,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/inventory/app
+          target: /code/app
+        - action: rebuild
+          path: ./backend/inventory/requirements.txt
 
 volumes:
   pgdata:
